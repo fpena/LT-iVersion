@@ -545,6 +545,13 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
             //show details
             if (showDetails && !self.visibleRemoteAlert)
             {
+                BOOL forceUpdate = NO;
+                NSString *requiredString = @"[REQUIRED]";
+                if ([details rangeOfString:requiredString].location != NSNotFound) {
+                    forceUpdate = YES;
+                    details = [details stringByReplacingOccurrencesOfString:requiredString withString:@""];
+                }
+
                 NSString *title = self.updateAvailableTitle;
                 if (!self.groupNotesByVersion)
                 {
@@ -976,9 +983,9 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
     return [self.ignoreButtonLabel length] && self.updatePriority < iVersionUpdatePriorityMedium;
 }
 
-- (BOOL)showRemindButton
+- (BOOL)showRemindButton:(BOOL)forceUpdate
 {
-    return [self.remindButtonLabel length] && self.updatePriority < iVersionUpdatePriorityHigh;
+    return [self.remindButtonLabel length] && self.updatePriority < iVersionUpdatePriorityHigh && !forceUpdate;
 }
 
 - (id)showAlertWithTitle:(NSString *)title
@@ -1014,7 +1021,7 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
         }
         
         //remind action
-        if ([self showRemindButton])
+        if ([self showRemindButton:NO])
         {
             [alert addAction:[UIAlertAction actionWithTitle:self.remindButtonLabel style:UIAlertActionStyleDefault handler:^(__unused UIAlertAction *action) {
                 [self didDismissAlert:alert withButtonAtIndex:[self showIgnoreButton]? 2: 1];
