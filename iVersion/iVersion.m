@@ -561,8 +561,8 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
                 self.visibleRemoteAlert = [self showAlertWithTitle:title
                                                            details:details
                                                      defaultButton:self.downloadButtonLabel
-                                                      ignoreButton:[self showIgnoreButton]? self.ignoreButtonLabel: nil
-                                                      remindButton:[self showRemindButton]? self.remindButtonLabel: nil];
+                                                      ignoreButton:[self showIgnoreButton:forceUpdate]? self.ignoreButtonLabel: nil
+                                                      remindButton:[self showRemindButton:forceUpdate]? self.remindButtonLabel: nil];
             }
         }
         else if ([self.delegate respondsToSelector:@selector(iVersionDidNotDetectNewVersion)])
@@ -978,9 +978,9 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
     }
 }
 
-- (BOOL)showIgnoreButton
+- (BOOL)showIgnoreButton:(BOOL)forceUpdate
 {
-    return [self.ignoreButtonLabel length] && self.updatePriority < iVersionUpdatePriorityMedium;
+    return [self.ignoreButtonLabel length] && self.updatePriority < iVersionUpdatePriorityMedium && !forceUpdate;
 }
 
 - (BOOL)showRemindButton:(BOOL)forceUpdate
@@ -1013,7 +1013,7 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
         }]];
         
         //ignore action
-        if ([self showIgnoreButton])
+        if ([self showIgnoreButton:NO])
         {
             [alert addAction:[UIAlertAction actionWithTitle:self.ignoreButtonLabel style:UIAlertActionStyleCancel handler:^(__unused UIAlertAction *action) {
                 [self didDismissAlert:alert withButtonAtIndex:1];
@@ -1024,7 +1024,7 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
         if ([self showRemindButton:NO])
         {
             [alert addAction:[UIAlertAction actionWithTitle:self.remindButtonLabel style:UIAlertActionStyleDefault handler:^(__unused UIAlertAction *action) {
-                [self didDismissAlert:alert withButtonAtIndex:[self showIgnoreButton]? 2: 1];
+                [self didDismissAlert:alert withButtonAtIndex:[self showIgnoreButton:NO]? 2: 1];
             }]];
         }
         
@@ -1125,8 +1125,8 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
 {
     //get button indices
     NSInteger downloadButtonIndex = 0;
-    NSInteger ignoreButtonIndex = [self showIgnoreButton]? 1: 0;
-    NSInteger remindButtonIndex = [self showRemindButton]? ignoreButtonIndex + 1: 0;
+    NSInteger ignoreButtonIndex = [self showIgnoreButton:NO]? 1: 0;
+    NSInteger remindButtonIndex = [self showRemindButton:NO]? ignoreButtonIndex + 1: 0;
     
     //latest version
     NSString *latestVersion = [self mostRecentVersionInDict:self.remoteVersionsDict];
