@@ -1251,8 +1251,8 @@ static NSString *const iVersionMacAppStoreURLFormat = @"macappstore://itunes.app
         NSLog(@"iVersion will open the App Store using the following URL: %@", self.updateURL);
     }
     
-    //[[UIApplication sharedApplication] openURL:self.updateURL];
-    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"https://itunes.apple.com/cl/app/lets-talk/id892192939?mt=8&uo=4"]];
+    [[UIApplication sharedApplication] openURL:self.updateURL];
+    //[[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"https://itunes.apple.com/cl/app/lets-talk/id892192939?mt=8&uo=4"]];
     return YES;
 }
 
